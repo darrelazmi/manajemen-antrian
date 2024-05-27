@@ -65,7 +65,7 @@ class Queue
     {
         
     }
-}
+};
 
 struct Node {
     Node* next;

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <utility>
 using namespace std;
 
 struct Node {
@@ -11,6 +13,7 @@ struct Node {
 
 class Queue {
 private:
+    vector<pair<Node, string>> riwayat;
     Node* head;
     Node* tail;
     int antrian;
@@ -26,8 +29,24 @@ public:
         isi = 0;
     }
 
-    void push(string nama, int waktu) {
-        if (isi < kapasitas) {
+    void front()
+    {
+        if(head==NULL) return;
+        cout << "Pelanggan Sekarang:";
+        cout << "\n\nNomor Antrian\t: " << head->nomor;
+        cout << "\nNama\t\t: " << head->nama;
+        cout << "\nWaktu Layanan\t: " << head->waktu;
+        cout << "\n===========================================\n";
+    }
+
+    void push() {
+        if (isi < kapasitas) 
+        {
+            string nama; int waktu;
+            cout << "Masukkan nama untuk mendaftar ke dalam antrian: ";
+            cin >> nama;
+            cout << "Masukkan waktu layanan yang diperkirakan (dalam menit): ";
+            cin >> waktu;
             Node* nodeBaru = new Node;
             nodeBaru->nama = nama;
             nodeBaru->nomor = antrian++;
@@ -73,15 +92,6 @@ public:
         }
     }
 
-    void daftarAntrian() {
-        string nama;
-        int waktu;
-        cout << "Masukkan nama untuk mendaftar ke dalam antrian: ";
-        cin >> nama;
-        cout << "Masukkan waktu layanan yang diperkirakan (dalam menit): ";
-        cin >> waktu;
-        push(nama, waktu);
-    }
 
     void monitorStatus() {
         if (isi == 0) {
@@ -102,20 +112,60 @@ public:
         return totalWaktu;
     }
 
-    void callNext() {
+    void callNext(bool cek) {
+        string kondisi;
+        if(cek)
+            kondisi = "Selesai";
+        else
+            kondisi = "Batal";
         if (isi == 0) {
             cout << "Antrian Kosong\n";
         } else {
             cout << "Memanggil Nomor: " << head->nomor << ", Nama: " << head->nama << "\n";
+            Node simpan;
+            simpan.nomor = head->nomor;
+            simpan.nama = head->nama;
+            simpan.waktu = head->waktu;
+            riwayat.push_back(make_pair(simpan, kondisi));
             pop();
         }
     }
 
-    void continueQueue() {
-        while (isi > 0) {
-            callNext();
+    void history()
+    {
+        cout << "Riwayat Antrian:\n";
+        for (int i = 0; i < riwayat.size(); i++) {
+            cout << "Nomor: " << riwayat[i].first.nomor << ", Nama: " << riwayat[i].first.nama << ", Waktu Layanan: " << riwayat[i].first.waktu << " menit" << ", Status: " << riwayat[i].second << endl;
         }
-        cout << "Semua pelanggan dalam antrian telah dipanggil.\n";
+    }
+
+    void search()
+    {
+        int angka;
+        cout << "Masukkan Nomor Antrian: ";
+        cin >> angka;
+        for (int i = 0; i < riwayat.size(); i++)
+        {
+            if(angka == riwayat[i].first.nomor)
+            {
+                cout << "Nomor: " << riwayat[i].first.nomor << ", Nama: " << riwayat[i].first.nama << ", Waktu Layanan: " << riwayat[i].first.waktu << " menit, Status: "<< riwayat[i].second << endl;
+                return;
+            }
+        }
+        Node * telusur = head;
+        while(telusur!=NULL)
+        {
+            if(telusur->nomor == angka)
+            {
+                cout << "Nomor: " << telusur->nomor << ", Nama: " << telusur->nama << ", Waktu Layanan: " << telusur->waktu << " menit, Status: Mengantri\n";
+                return;
+            }
+        }
+        if ()
+        {
+            /* code */
+        }
+        
     }
 };
 
@@ -129,42 +179,51 @@ int main(int argc, char const *argv[]) {
     Queue q(kapasitas);
     
     while (1) {
-        cout << "\nOperasi pada Queue" << endl;
-        cout << "1. Cetak Antrian" << endl;
-        cout << "2. Hapus dari Antrian" << endl;
-        cout << "3. Masukkan ke Antrian" << endl;
-        cout << "4. Monitor Status Antrian" << endl;
-        cout << "5. Panggil Pelanggan Berikutnya" << endl;
-        cout << "6. Lanjutkan Pemanggilan Antrian" << endl;
-        cout << "7. Keluar" << endl;
-        cout << "Ketik angka yang akan anda pilih: ";
+        cout << "----------QUEUE MANAGEMENT SYSTEM----------\n";
+        cout << "Daftar Operasi:" << endl;
+        cout << "===========================================\n";
+        cout << "1. Seluruh Antrian" << endl;
+        cout << "2. Pelanggan berikutnya" << endl;
+        cout << "3. Daftar Antrian" << endl;
+        cout << "4. Status Antrian" << endl;
+        cout << "5. Lewati Pelanggan" << endl;
+        cout << "6. Riwayat Pelanggan" << endl;
+        cout << "7. Cari Pelanggan" << endl;
+        cout << "8. Keluar" << endl;
+        cout << "===========================================\n";
+        q.front();
+        cout << "Pilih operasi untuk antrian: ";
         cin >> choice;
-
+        cout << "===========================================\n";
         switch (choice) {
             case 1:
                 q.display();
                 break;
             case 2:
-                q.pop();
+                q.callNext(1);
                 break;
             case 3:
-                q.daftarAntrian();
+                q.push();
                 break;
             case 4:
                 q.monitorStatus();
                 break;
             case 5:
-                q.callNext();
+                q.callNext(0);
                 break;
             case 6:
-                q.continueQueue();
+                q.history();
                 break;
             case 7:
-                cout << "Keluar dari program.\n";
+                q.search();
+                break;
+            case 8:
+                cout << "Keluar dari program....\n";
                 exit(0);
             default:
                 cout << "Pilihan tidak valid. Silakan coba lagi.\n";
         }
+        
     }
 
     return 0;

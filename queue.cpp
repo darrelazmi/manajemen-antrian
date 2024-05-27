@@ -148,7 +148,7 @@ public:
         {
             if(angka == riwayat[i].first.nomor)
             {
-                cout << "Nomor: " << riwayat[i].first.nomor << ", Nama: " << riwayat[i].first.nama << ", Waktu Layanan: " << riwayat[i].first.waktu << " menit, Status: "<< riwayat[i].second << endl;
+                cout << "\nNomor: " << riwayat[i].first.nomor << ", Nama: " << riwayat[i].first.nama << ", Waktu Layanan: " << riwayat[i].first.waktu << " menit, Status: "<< riwayat[i].second << endl;
                 return;
             }
         }
@@ -157,14 +157,11 @@ public:
         {
             if(telusur->nomor == angka)
             {
-                cout << "Nomor: " << telusur->nomor << ", Nama: " << telusur->nama << ", Waktu Layanan: " << telusur->waktu << " menit, Status: Mengantri\n";
+                cout << "\nNomor: " << telusur->nomor << ", Nama: " << telusur->nama << ", Waktu Layanan: " << telusur->waktu << " menit, Status: Mengantri\n";
                 return;
             }
         }
-        if ()
-        {
-            /* code */
-        }
+        cout << "\nPelanggan Tidak Ditemukan!\n";
         
     }
 };

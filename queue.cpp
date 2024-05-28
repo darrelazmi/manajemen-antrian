@@ -29,7 +29,7 @@ public:
         isi = 0;
     }
 
-    void front()
+    void front() // O(1)
     {
         if(head==NULL) return;
         cout << "Pelanggan Sekarang:";
@@ -39,7 +39,8 @@ public:
         cout << "\n===========================================\n";
     }
 
-    void push() {
+    void push() // O(1)
+    {
         if (isi < kapasitas) 
         {
             string nama; int waktu;
@@ -66,7 +67,8 @@ public:
         }
     }
 
-    void pop() {
+    void pop() // O(1)
+    {
         if (isi == 0) {
             cout << "Antrian Kosong\n";
         } else {
@@ -80,20 +82,22 @@ public:
         }
     }
 
-    void display() {
+    void display() // O(N)
+    {
         if (isi == 0) {
             cout << "Antrian Kosong\n";
         } else {
             Node* temp = head;
             while (temp) {
-                cout << "Nomor: " << temp->nomor << ", Nama: " << temp->nama << ", Waktu Layanan: " << temp->waktu << " menit\n";
+                cout << "Nomor: " << temp->nomor << ", Nama: " << temp->nama << ", Waktu Layanan: " << temp->waktu << " menit, Status: Mengantri\n";
                 temp = temp->next;
             }
         }
     }
 
 
-    void monitorStatus() {
+    void monitorStatus() // O(N)
+    {
         if (isi == 0) {
             cout << "Antrian Kosong\n";
         } else {
@@ -102,7 +106,8 @@ public:
         }
     }
 
-    int getTotalWaktuTunggu() {
+    int getTotalWaktuTunggu() // O(N) 
+    {
         int totalWaktu = 0;
         Node* temp = head;
         while (temp) {
@@ -112,13 +117,82 @@ public:
         return totalWaktu;
     }
 
-    void callNext(bool cek) {
+    void cancel(bool cek) // O(N)
+    {
         string kondisi;
         if(cek)
             kondisi = "Selesai";
         else
             kondisi = "Batal";
-        if (isi == 0) {
+
+        if(!cek)
+        {
+            int batal;
+            cout << "Masukkan Nomor Pelanggan yang Dibatalkan: ";
+            cin >> batal;
+            Node * telusur = head;
+            int iterasi=0;
+            if (batal == head->nomor)
+            {
+                char c;
+                cout << "Pelanggan yang Dibatalkan:";
+                cout << "\n\nNomor Antrian\t: " << head->nomor;
+                cout << "\nNama\t\t: " << head->nama;
+                cout << "\nWaktu Layanan\t: " << head->waktu;
+                cout << "\n\nKonfirmasi Pembatalan (Y/N): ";
+                cin >> c;
+                c = toupper(c);
+                cout << "\n===========================================\n";
+                if(c!='Y')
+                {
+                    cout << "PEMBATALAN GAGAL!\n";
+                    return;
+                }
+                Node * hapus = telusur;
+                Node simpan;
+                simpan.nomor = hapus->nomor;
+                simpan.nama = hapus->nama;
+                simpan.waktu = hapus->waktu;
+                riwayat.push_back(make_pair(simpan, kondisi));
+                head = head->next;
+                delete hapus;
+                return;
+            }
+            
+            while(iterasi<isi-1)
+            {
+                if(telusur->next->nomor == batal)
+                {
+                    char c;
+                    cout << "Pelanggan yang Dibatalkan:";
+                    cout << "\n\nNomor Antrian\t: " << telusur->next->nomor;
+                    cout << "\nNama\t\t: " << telusur->next->nama;
+                    cout << "\nWaktu Layanan\t: " << telusur->next->waktu;
+                    cout << "\n\nKonfirmasi Pembatalan (Y/N): ";
+                    cin >> c;
+                    c = toupper(c);
+                    cout << "\n===========================================\n";
+                    if(c!='Y')
+                    {
+                        cout << "PEMBATALAN GAGAL!\n";
+                        return;
+                    }
+                    Node * hapus = telusur->next;
+                    Node simpan;
+                    simpan.nomor = hapus->nomor;
+                    simpan.nama = hapus->nama;
+                    simpan.waktu = hapus->waktu;
+                    riwayat.push_back(make_pair(simpan, kondisi));
+                    telusur->next = telusur->next->next;
+                    delete hapus;
+                    return;
+                }
+                telusur=telusur->next;
+                iterasi++;
+            }
+            cout << "NOMOR TIDAK ADA PADA ANTRIAN\n";
+        }
+        else if (isi == 0) {
             cout << "Antrian Kosong\n";
         } else {
             cout << "Memanggil Nomor: " << head->nomor << ", Nama: " << head->nama << "\n";
@@ -131,7 +205,7 @@ public:
         }
     }
 
-    void history()
+    void history() // O(N)
     {
         cout << "Riwayat Antrian:\n";
         for (int i = 0; i < riwayat.size(); i++) {
@@ -139,7 +213,7 @@ public:
         }
     }
 
-    void search()
+    void search() // O(N)
     {
         int angka;
         cout << "Masukkan Nomor Antrian: ";
@@ -183,10 +257,11 @@ int main(int argc, char const *argv[]) {
         cout << "2. Pelanggan berikutnya" << endl;
         cout << "3. Daftar Antrian" << endl;
         cout << "4. Status Antrian" << endl;
-        cout << "5. Lewati Pelanggan" << endl;
+        cout << "5. Batalkan Pelanggan" << endl;
         cout << "6. Riwayat Pelanggan" << endl;
         cout << "7. Cari Pelanggan" << endl;
-        cout << "8. Keluar" << endl;
+        cout << "8. Semua Pelanggan" << endl;
+        cout << "9. Keluar" << endl;
         cout << "===========================================\n";
         q.front();
         cout << "Pilih operasi untuk antrian: ";
@@ -197,7 +272,7 @@ int main(int argc, char const *argv[]) {
                 q.display();
                 break;
             case 2:
-                q.callNext(1);
+                q.cancel(1);
                 break;
             case 3:
                 q.push();
@@ -206,7 +281,7 @@ int main(int argc, char const *argv[]) {
                 q.monitorStatus();
                 break;
             case 5:
-                q.callNext(0);
+                q.cancel(0);
                 break;
             case 6:
                 q.history();
@@ -215,6 +290,10 @@ int main(int argc, char const *argv[]) {
                 q.search();
                 break;
             case 8:
+                q.history();
+                q.display();
+                break;
+            case 9:
                 cout << "Keluar dari program....\n";
                 exit(0);
             default:
